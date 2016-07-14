@@ -35,6 +35,7 @@ This is the main file which contains the main game functions, logic and GUI
 # Development Process ---------------------------------
 If you are curious as to how I developed the program, this was my process, which you may find helpful if you are learning
 programming:
+
 1) Thourough review of game steps, requirements and logic, step-by-step in a notebook, with very rough pseudo-code
 
 2) Creation of the main classes to generate necessary objects (cards, player and pots)
