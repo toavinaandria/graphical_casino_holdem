@@ -62,13 +62,16 @@ the main game logic and GUI
 
 # Credits ----------------------------------------
 All code was created from scratch, with the help of Stack Overflow to overcome some problems.
+
 The card images are open source, and were converted from PNG to GIF using OS X Preview.
-The cards were downloaded from opengameart.org (http://opengameart.org/sites/default/files/Playing%20Cards.zip)
+
+The cards were downloaded from opengameart.org (http://opengameart.org/sites/default/files/Playing%20Cards.zip).
 
 Rules were taken from Wikipedia and poker hand rankings from various online sources.
 
 Thanks to JM Portilla for creating a fantastic Python course which taught me most of what I needed to know in a very clear way 
 (https://www.udemy.com/complete-python-bootcamp/)
+
 Thanks to the creators of Jupyter notebook, which I used initially, and JetBrains, which I grew to love for their fantastic PyCharm
 IDE, which has saved me countless hours of typing and manual refactoring.
 
