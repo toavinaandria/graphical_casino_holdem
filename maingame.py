@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # Note: Rules taken from https://en.wikipedia.org/wiki/Casino_hold_%27em
 
 import Tkinter as tk
@@ -7,9 +5,12 @@ import webbrowser
 
 import gamevars
 from gameclasses import Deck, Player, Pot, PhysHand, SynthHand
+
+# To change settings, modify the gamevars.py file
 from gamevars import sidebet_paytable, call_multiple, min_sidebet_hand, space_btwn_cards, card_xshrink, card_yshrink, \
     canvas_width, canvas_height, msgbox_wraplength, window_x, window_y, rules_url, handranks_url, cardback_path, \
     bankroll_display_coords, ante_display_coords, sidebet_display_coords, callbet_display_coords
+
 from handevaluator import calcvalue
 
 # Create relevant initial game objects
@@ -37,69 +38,76 @@ class GameApp(tk.Tk):
         self.create_main_widgets()
         self.get_sidebet()
 
-    # Useful game functions ------------------------------------------------------------------------------------------
+    # Validation functions for betting amounts -------------------------------------------------------------------------
 
     def validate_antebet(self, user_input, new_value):
         """ Used to ensure only positive integers are entered for bets and bets are within bankroll"""
-        valid = new_value in '0123456789' and user_input != '' != 0
-        if valid:
+        # Disallows blanks and zero as ante bets are mandatory for progression
+        valid_input = new_value in '0123456789' and user_input != '' != 0
+        if valid_input:
             minval = 1
             maxval = player1.bankroll + 1
             if int(user_input) not in range(minval, maxval):
-                valid = False
-        if not valid:
+                valid_input = False
+        if not valid_input:
             self.bell()
-        return valid
+        return valid_input
 
     def validate_sidebet(self, user_input, new_value):
         """ Used to ensure only positive integers are entered for bets and bets are within bankroll"""
-        valid = new_value in '0123456789' and user_input != ''
-        if valid:
+        valid_input = new_value in '0123456789' and user_input != ''
+        if valid_input:
             minval = 0
             # Maximum value is constrained by the fact that the side bet can only be executed once an ante bet is made
             # Minimum ante bet being 1 chip, if the player were to bet all their bankroll minus 1 chip for the ante bet
             # this would be the extreme scenario.
             maxval = player1.bankroll
             if int(user_input) not in range(minval, maxval):
-                valid = False
-        if not valid:
+                valid_input = False
+        if not valid_input:
             self.bell()
-        return valid
+        return valid_input
 
-    def playerisbankrupt(self):
+    # Game functions --------------------------------------------------------------------------------------------------
+
+    def player_is_bankrupt(self):
         """Boolean that checks whether player is technically bankrupt"""
         # Player needs a minimum of 2 chips to play an ante bet and a sidebet, below that they cannot win a hand, hence
         # why bankrolls below 2 chips are technically bankrupt.
-        if player1.bankroll < 2 and player1_pot.ante_bet == 0 and player1_pot.call_bet == 0 and \
-                        player1_pot.side_bet == 0:
-            return True
-        else:
-            return False
+
+        return player1.bankroll < 2 and player1_pot.ante_bet == 0 and player1_pot.call_bet == 0 and \
+                        player1_pot.side_bet == 0
 
     def restart_window(self):
-        """Creates a window to ask whether players want to restart with a fresh bankroll"""
-        self.bankrupt_window = tk.LabelFrame(text="Start afresh?",
+        """Creates a window to ask whether players want to restart with a fresh bankroll if they are bankrupt"""
+
+        # Frame title -------------------------------------------------------------------------------------------------
+        self.bankrupt_window = tk.LabelFrame(text="Start a new game with a new bankroll?",
                                              takefocus=True,
                                              relief='raised')
 
         self.bankrupt_window.pack()
 
+        # Main text ---------------------------------------------------------------------------------------------------
         self.bankrupt_text = tk.Label(self.bankrupt_window,
                                       text="You are bankrupt!",
                                       wraplength=msgbox_wraplength)
         self.bankrupt_text.pack()
 
+        # Restart button ----------------------------------------------------------------------------------------------
         self.restart_button = tk.Button(self.bankrupt_window,
                                         text="Restart with new bankroll",
                                         command=self.reset_bankroll)
         self.restart_button.pack()
 
+        # Quit button -------------------------------------------------------------------------------------------------
         self.quit_button = tk.Button(self.bankrupt_window,
                                      text="Quit",
                                      command=quit)
 
         self.quit_button.pack()
 
+        # Canvas window------------------------------------------------------------------------------------------------
         self.bankrupt_windowobj = self.background.create_window(window_x,
                                                                 window_y,
                                                                 window=self.bankrupt_window,
@@ -108,8 +116,10 @@ class GameApp(tk.Tk):
 
     def eval_hands(self):
         """Evaluates the score of relevant hands to check whether bank qualifies and who wins which round"""
+
         global player1_synth, bank_synth, player1_cards, community_cards, bank_cards
-        # Create synthetic hands
+
+        # Create synthetic hands from community cards and bank and player cards so they can be evaluated
         player1_synth = SynthHand(owner="player1")
         bank_synth = SynthHand(owner="bank")
 
@@ -121,6 +131,8 @@ class GameApp(tk.Tk):
 
         player1_synth.calcvalue()
         bank_synth.calcvalue()
+
+    # Menu functiona ------------------------------------------------------------------------------------------------
 
     def create_menu(self):
         """Creates toplevel menu for help, restarting and exiting the game"""
@@ -144,6 +156,8 @@ class GameApp(tk.Tk):
     def show_hand_ranks(self):
         """Opens a browser window with the URL showing hand ranks for help"""
         webbrowser.open(handranks_url, new=1, autoraise=True)
+
+    # -----------------------------------------------------------------------------------------------------------------
 
     def create_main_widgets(self):
         """Main function to create canvas and Tkinter widgets for GUI and start of game"""
@@ -269,6 +283,8 @@ class GameApp(tk.Tk):
         self.CCard2_rs = str(community_cards.cards[1])
         self.CCard3_rs = str(community_cards.cards[2])
 
+    # -------------------------------------------------------------------------------------------------------------------
+
     def reset_bankroll(self):
         """Resets bankroll if player was bankrupt and wants to play another round"""
         player1.bankroll = gamevars.starting_chips
@@ -277,20 +293,23 @@ class GameApp(tk.Tk):
     def get_antebet(self):
         """Displays ante bet window on canvas and stores bet value"""
 
-        self.Antewindow = tk.LabelFrame(text="Ante Bet",
-                                        takefocus=True,
-                                        relief='raised')
-        self.Antewindow.pack()
+        # Frame title ----------------------------------------------------------------------------------------------
+        self.ante_window = tk.LabelFrame(text="Ante Bet",
+                                         takefocus=True,
+                                         relief='raised')
+        self.ante_window.pack()
 
-        self.antebet_label = tk.Label(self.Antewindow,
+        # Main message ---------------------------------------------------------------------------------------------
+        self.antebet_label = tk.Label(self.ante_window,
                                       text="How much do you want to bet as an ante bet?" + str(
-                                          "\n Please note that your call bet will be") + str(
-                                          "%sx your ante bet, so ensure you can afford to call." % str(
-                                              gamevars.call_multiple)),
+                                      "\n Please note that your call bet will be") + str(
+                                      "%sx your ante bet, so ensure you can afford to call." % str(
+                                      gamevars.call_multiple)),
                                       wraplength=msgbox_wraplength)
         self.antebet_label.pack()
 
-        self.ante_entry = tk.Spinbox(self.Antewindow,
+        # Entry object ---------------------------------------------------------------------------------------------
+        self.ante_entry = tk.Spinbox(self.ante_window,
                                      width=5,
                                      from_=1,
                                      to=player1.bankroll,
@@ -299,15 +318,18 @@ class GameApp(tk.Tk):
 
         self.ante_entry.pack()
 
-        self.confirm_ante_button = tk.Button(self.Antewindow,
+        # Confirm button -------------------------------------------------------------------------------------------
+
+        self.confirm_ante_button = tk.Button(self.ante_window,
                                              text="Confirm ante bet",
                                              command=self.confirm_ante,
                                              state='normal')
         self.confirm_ante_button.pack()
 
-        self.Antewindowobj = self.background.create_window(window_x,
-                                                           window_y,
-                                                           window=self.Antewindow)
+        # Window object --------------------------------------------------------------------------------------------
+        self.ante_window_obj = self.background.create_window(window_x,
+                                                             window_y,
+                                                             window=self.ante_window)
 
     def display_rd1_cards(self):
         """Show the faces of the flop cards on the canvas (which previously were hidden)"""
@@ -315,40 +337,59 @@ class GameApp(tk.Tk):
                                               self.P1Card1_rs +
                                               ".gif").subsample(card_xshrink,
                                                                 card_yshrink)
-        self.background.create_image(canvas_width - 200,
-                                     canvas_height - 80,
-                                     image=self.P1Card1_img)
-
         self.P1Card2_img = tk.PhotoImage(file="images/" +
                                               self.P1Card2_rs +
                                               ".gif").subsample(card_xshrink,
                                                                 card_yshrink)
-        self.background.create_image(canvas_width - 200 + space_btwn_cards,
-                                     canvas_height - 80,
-                                     image=self.P1Card2_img)
-
         self.CCard1_img = tk.PhotoImage(file="images/" +
                                              self.CCard1_rs +
                                              ".gif").subsample(card_xshrink,
                                                                card_yshrink)
-        self.background.create_image(canvas_width / 3,
-                                     canvas_height / 2,
-                                     image=self.CCard1_img)
-
         self.CCard2_img = tk.PhotoImage(file="images/" +
                                              self.CCard2_rs +
                                              ".gif").subsample(card_xshrink,
                                                                card_yshrink)
+        self.CCard3_img = tk.PhotoImage(file="images/" +
+                                             self.CCard3_rs +
+                                             ".gif").subsample(card_xshrink, card_yshrink)
+
+        self.background.create_image(canvas_width - 200,
+                                     canvas_height - 80,
+                                     image=self.P1Card1_img)
+
+        self.background.create_image(canvas_width - 200 + space_btwn_cards,
+                                     canvas_height - 80,
+                                     image=self.P1Card2_img)
+
+        self.background.create_image(canvas_width / 3,
+                                     canvas_height / 2,
+                                     image=self.CCard1_img)
+
         self.background.create_image(canvas_width / 3 + space_btwn_cards,
                                      canvas_height / 2,
                                      image=self.CCard2_img)
 
-        self.CCard3_img = tk.PhotoImage(file="images/" +
-                                             self.CCard3_rs +
-                                             ".gif").subsample(card_xshrink, card_yshrink)
         self.background.create_image(canvas_width / 3 + space_btwn_cards * 2,
                                      canvas_height / 2,
                                      image=self.CCard3_img)
+
+    def update_display(self, target, content):
+        """
+        Allows to change text in game statistics display
+        :param target: Object in canvas for which to update text, must be one of the display objects
+        :param content: Text to display, must be a string
+        """
+        self.background.itemconfig(target, text=content)
+
+    def update_rd1_displays(self):
+        """Updates relevant round 1 displays (i.e. everything except call bet"""
+        self.update_display(self.bankroll_display,
+                            str(player1.bankroll) + " chips")
+        self.update_display(self.ante_display,
+                        str(player1_pot.ante_bet) + " chips")
+        self.update_display(self.sidebet_display,
+                        str(player1_pot.side_bet) + " chips")
+
 
     def confirm_ante(self):
         """
@@ -356,14 +397,9 @@ class GameApp(tk.Tk):
         is pressed. Updates bankroll and ante and side bet displays.
         """
         self.update_antebet()
-        self.background.itemconfig(self.Antewindowobj,
+        self.background.itemconfig(self.ante_window_obj,
                                    state='hidden')
-        self.update_display(self.bankroll_display,
-                            str(player1.bankroll) + " chips")
-        self.update_display(self.ante_display,
-                            str(player1_pot.ante_bet) + " chips")
-        self.update_display(self.sidebet_display,
-                            str(player1_pot.side_bet) + " chips")
+        self.update_rd1_displays()
         self.display_rd1_cards()
 
         # Execute next steps in the program
@@ -374,77 +410,73 @@ class GameApp(tk.Tk):
     def get_sidebet(self):
         """Open sidebet window to get sidebet amounts"""
 
-        self.Sidebetwindow = tk.LabelFrame(text="AA Side bet",
-                                           takefocus=True,
-                                           relief='raised')
+        if self.player_is_bankrupt():
+            self.restart_window()
+        else:
 
-        self.Sidebetwindow.pack()
+            # Frame title ----------------------------------------------------------------------------------------------
+            self.sidebet_window = tk.LabelFrame(text="AA Side bet",
+                                                takefocus=True,
+                                                relief='raised')
 
-        self.sidebet_label = tk.Label(self.Sidebetwindow,
-                                      text="How much do you want to bet as an AA side bet?" + str(
+            self.sidebet_window.pack()
+
+            # Main message ---------------------------------------------------------------------------------------------
+            self.sidebet_label = tk.Label(self.sidebet_window,
+                                          text="How much do you want to bet as an AA side bet?" + str(
                                           "\n You will need at least a pair of A at the flop to win. ") + str(
                                           "The side bet will be placed after the ante bet and will be based") + str(
                                           " on the flop cards.") + str(
                                           "\nIf you do not want to place an AA side") + str(
                                           "bet, please leave the number as zero"),
-                                      wraplength=msgbox_wraplength)
+                                          wraplength=msgbox_wraplength)
 
-        self.sidebet_label.pack()
+            self.sidebet_label.pack()
 
-        self.sidebet_entry = tk.Spinbox(self.Sidebetwindow,
-                                        width=5,
-                                        from_=0,
-                                        to=player1.bankroll,
-                                        validate='key',
-                                        validatecommand=(self.register(self.validate_sidebet), '%P', '%S'))
-        self.sidebet_entry.pack()
+            # Sidebet entry box ----------------------------------------------------------------------------------------
+            self.sidebet_entry = tk.Spinbox(self.sidebet_window,
+                                            width=5,
+                                            from_=0,
+                                            to=player1.bankroll,
+                                            validate='key',
+                                            validatecommand=(self.register(self.validate_sidebet), '%P', '%S'))
+            self.sidebet_entry.pack()
 
-        self.sidebet_confirm_button = tk.Button(self.Sidebetwindow,
-                                                text="Confirm AA side bet",
-                                                command=self.confirm_sidebet,
-                                                state='normal')
+            # Sidebet confirm button -----------------------------------------------------------------------------------
+            self.sidebet_confirm_button = tk.Button(self.sidebet_window,
+                                                    text="Confirm AA side bet",
+                                                    command=self.confirm_sidebet,
+                                                    state='normal')
 
-        self.sidebet_confirm_button.pack()
+            self.sidebet_confirm_button.pack()
 
-        self.Sidebetwindowobj = self.background.create_window(window_x,
-                                                              window_y,
-                                                              window=self.Sidebetwindow)
+            # Sidebet window object ------------------------------------------------------------------------------------
+            self.sidebet_window_obj = self.background.create_window(window_x,
+                                                                    window_y,
+                                                                    window=self.sidebet_window)
 
     def confirm_sidebet(self):
         """Gets relevant sidebet value and hides sidebet window"""
         self.update_sidebet()
-        self.background.itemconfig(self.Sidebetwindowobj,
+        self.background.itemconfig(self.sidebet_window_obj,
                                    state='hidden')
-        self.update_display(self.bankroll_display,
-                            str(player1.bankroll) + " chips")
-        self.update_display(self.ante_display,
-                            str(player1_pot.ante_bet) + " chips")
-        self.update_display(self.sidebet_display,
-                            str(player1_pot.side_bet) + " chips")
+        self.update_rd1_displays()
 
         # Execute next step in the program - requests ante bet amount
         self.get_antebet()
 
-    def update_display(self, target, content):
-        """
-        Allows to change text in game statistics display
-        :param target: Object in canvas for which to update text, must be one of the display objects
-        :param content: Text to display, must be a string
-        """
-        self.background.itemconfig(target, text=content)
-
     def update_antebet(self):
-        """Update ante bet value from spinbox"""
+        """Update ante bet value and bankroll from spinbox"""
         player1_pot.ante_bet = int(self.ante_entry.get())
         player1.change_bankroll(- player1_pot.ante_bet)
 
     def update_sidebet(self):
-        """Update sidebet value from spinbox"""
+        """Update sidebet value and bankroll from spinbox"""
         player1_pot.side_bet = int(self.sidebet_entry.get())
         player1.change_bankroll(- player1_pot.side_bet)
 
     def reset_game(self):
-        """Shuflles the deck, empties all hands and creates initial cards (but without resetting the bankroll)"""
+        """Shuflles the deck, empties all hands and creates initial cards (without resetting bankroll)"""
         global deck, player1_cards, bank_cards, community_cards
         deck = Deck()
         deck.shuffle()
@@ -463,8 +495,10 @@ class GameApp(tk.Tk):
     def exec_side_bet(self):
         """Executes side bet procedures and updates displays accordingly"""
         if player1_pot.side_bet > 0:
-            # Calculates minimum value required to win side bet - typically a pair of Aces
+
+            # Calculates minimum value required to win side bet - a pair of Aces as a default
             side_bet_threshold = calcvalue(min_sidebet_hand[0], min_sidebet_hand[1])
+
             if player1_synth.score >= side_bet_threshold[0]:
                 payout = (
                              1 + sidebet_paytable[
@@ -472,11 +506,8 @@ class GameApp(tk.Tk):
 
                 player1.change_bankroll(payout)
 
-                print "You have won the AA side bet with the following hand : %s. You have won %s chips" % (
-                    player1_synth.desc, str(payout - player1_pot.side_bet))
-
-                self.display_result(title="AA side bet - You Win!",
-                                    text="You have won the AA side bet with the following hand" + str(
+                self.display_AA_result(title="AA side bet - You Win!",
+                                       text="You have won the AA side bet with the following hand" + str(
                                         ": %s. You have won %s chips") % (player1_synth.desc,str(
                                         payout - player1_pot.side_bet)))
 
@@ -490,13 +521,10 @@ class GameApp(tk.Tk):
                                     str(player1_pot.side_bet) + " chips")
 
             else:
-                print (
-                    "Your hand: %s is too weak to win the AA side bet. You have lost your side bet of %s chips. " % (
-                        player1_synth.desc, str(player1_pot.side_bet)))
-
-                self.display_result(title="AA side bet - You've Lost!",
-                                    text="Your hand: %s is too weak to win the AA side bet." % player1_synth.desc + str(
-                                        "You have lost your side bet of %s chips. ") % str(player1_pot.side_bet))
+                self.display_AA_result(title="AA side bet - You've Lost!",
+                                       text="Your hand: %s is too weak to win the AA side bet." % player1_synth.desc +
+                                            str("You have lost your side bet of %s chips. ") % str(
+                                                player1_pot.side_bet))
 
                 # Reset side bet
                 player1_pot.side_bet = 0
@@ -504,30 +532,36 @@ class GameApp(tk.Tk):
                 self.update_display(self.sidebet_display,
                                     str(player1_pot.side_bet) + " chips")
 
-                if player1.bankroll == 0:
+                if self.player_is_bankrupt():
                     self.restart_window()
                 else:
                     pass
         else:
             self.begin_round2()
 
-    def display_result(self, title, text):
+    def display_AA_result(self, title, text):
         """Function that displays results of AA sidebet with button allowing player to continue on"""
+
+        # Frame title -------------------------------------------------------------------------------------------------
+
         self.results_window = tk.LabelFrame(text=title,
                                             takefocus=True,
                                             relief='raised')
         self.results_window.pack()
 
+        # Frame main text --------------------------------------------------------------------------------------------
         self.results_label = tk.Label(self.results_window,
                                       text=text,
                                       wraplength=msgbox_wraplength)
         self.results_label.pack()
 
+        # Continue button --------------------------------------------------------------------------------------------
         self.continue_button = tk.Button(self.results_window,
                                          text="Continue",
                                          command=lambda: self.begin_round2())
         self.continue_button.pack()
 
+        # Window object ---------------------------------------------------------------------------------------------
         self.results_windowobj = self.background.create_window(window_x,
                                                                window_y,
                                                                window=self.results_window)
@@ -535,7 +569,7 @@ class GameApp(tk.Tk):
     def begin_round2(self):
         """Begins procedure after ante and side bets, asking player whether they want to fold or call after flop"""
 
-        # Removes sidebet window only if has been created, otherwise if no sidebet, continues to next step
+        # Removes sidebet window only if has been created, otherwise continues to next step
         try:
             self.background.itemconfig(self.results_windowobj, state="hidden")
         except:
@@ -543,19 +577,19 @@ class GameApp(tk.Tk):
 
         if player1.bankroll < call_multiple * player1_pot.ante_bet:
 
-            print "You cannot afford to call the bet. You lose your ante bet."
             self.show_cannot_call_display("Can't afford call bet")
 
             player1_pot.ante_bet = 0
             self.update_display(self.ante_display, str(player1_pot.ante_bet) + " chips ")
 
         else:
-
-            self.foldorcall_window = tk.LabelFrame(text="Fold or Call",
+            # Frame title -----------------------------------------------------------------------------------------
+            self.foldorcall_window = tk.LabelFrame(text="Fold or Call?",
                                                    takefocus=True,
                                                    relief='raised')
             self.foldorcall_window.pack()
 
+            # Frame main text -------------------------------------------------------------------------------------
             self.foldorcalltxt = "You currently have the following hand: \n %s. Do you want " % (
                 player1_synth.desc) + str(
                 "to fold or call? If you call, your call bet will be %s x the ante bet" % (str(call_multiple)) + str(
@@ -566,16 +600,19 @@ class GameApp(tk.Tk):
                                             wraplength=msgbox_wraplength)
             self.foldorcall_text.pack()
 
+            # Fold button ----------------------------------------------------------------------------------------
             self.fold_button = tk.Button(self.foldorcall_window,
                                          text="Fold",
                                          command=self.fold)
             self.fold_button.pack(side='left', expand=True, ipadx=50)
 
+            # Call button ----------------------------------------------------------------------------------------
             self.call_button = tk.Button(self.foldorcall_window,
                                          text="Call",
                                          command=self.call)
             self.call_button.pack(side='right', expand=True, ipadx=50)
 
+            # Window object -------------------------------------------------------------------------------------
             self.foldorcall_windowobj = self.background.create_window(window_x,
                                                                       window_y,
                                                                       window=self.foldorcall_window)
@@ -585,12 +622,14 @@ class GameApp(tk.Tk):
 
         self.background.itemconfig(self.foldorcall_windowobj, state="hidden")
 
+        # Frame title -----------------------------------------------------------------------------------------
         self.foldresult_window = tk.LabelFrame(text="You have folded",
                                                takefocus=True,
                                                relief='raised')
 
         self.foldresult_window.pack()
 
+        # Main text -------------------------------------------------------------------------------------------
         self.foldtext = "You have folded. You lose your ante outlay (%s chips)" % (str(player1_pot.ante_bet))
 
         self.foldresult_text = tk.Label(self.foldresult_window,
@@ -602,7 +641,7 @@ class GameApp(tk.Tk):
         player1_pot.ante_bet = 0
         self.update_display(self.ante_display, str(player1_pot.ante_bet) + " chips")
 
-        if self.playerisbankrupt():
+        if self.player_is_bankrupt():
             self.restart_window()
 
         else:
@@ -610,16 +649,19 @@ class GameApp(tk.Tk):
                                             text="Do you want to play again?")
             self.play_again_text.pack()
 
+            # Play again button -----------------------------------------------------------------------------
             self.play_again_button = tk.Button(self.foldresult_window,
                                                text="Yes",
                                                command=self.play_again)
             self.play_again_button.pack(side='left', expand=True, ipadx=50)
 
+            # Quit button -----------------------------------------------------------------------------------
             self.quit_button = tk.Button(self.foldresult_window,
                                          text="No. Quit",
                                          command=quit)
             self.quit_button.pack(side='right', expand=True, ipadx=50)
 
+            # Window object ---------------------------------------------------------------------------------
             self.foldresult_windowobj = self.background.create_window(window_x,
                                                                       window_y,
                                                                       window=self.foldresult_window)
@@ -642,14 +684,15 @@ class GameApp(tk.Tk):
                                              self.BCard1_rs +
                                              ".gif").subsample(card_xshrink,
                                                                card_yshrink)
-        self.background.create_image(60,
-                                     canvas_height / 5,
-                                     image=self.BCard1_img)
 
         self.BCard2_img = tk.PhotoImage(file="images/" +
                                              self.BCard2_rs +
                                              ".gif").subsample(card_xshrink,
                                                                card_yshrink)
+        self.background.create_image(60,
+                                     canvas_height / 5,
+                                     image=self.BCard1_img)
+
         self.background.create_image(60 + space_btwn_cards,
                                      canvas_height / 5,
                                      image=self.BCard2_img)
@@ -669,16 +712,14 @@ class GameApp(tk.Tk):
                                              self.CCard4_rs +
                                              ".gif").subsample(card_xshrink,
                                                                card_yshrink)
-
-        self.background.create_image(canvas_width / 3 + space_btwn_cards * 3,
-                                     canvas_height / 2,
-                                     image=self.CCard4_img)
-
         self.CCard5_img = tk.PhotoImage(file="images/" +
                                              self.CCard5_rs +
                                              ".gif").subsample(card_xshrink,
                                                                card_yshrink)
 
+        self.background.create_image(canvas_width / 3 + space_btwn_cards * 3,
+                                     canvas_height / 2,
+                                     image=self.CCard4_img)
         self.background.create_image(canvas_width / 3 + space_btwn_cards * 4,
                                      canvas_height / 2,
                                      image=self.CCard5_img)
@@ -708,7 +749,7 @@ class GameApp(tk.Tk):
     def define_rd2_outcome(self):
         """Checks player hand vs bank hand to determine what outcome is shown to player"""
 
-        # Determine whether bank qualifies
+        # Determine whether bank qualifies with a sufficiently large hand
         self.bank_qualifies_rd2 = 0
         if self.bank_synth.score >= calcvalue(gamevars.min_bank_hand[0], gamevars.min_bank_hand[1])[0]:
             self.bank_qualifies_rd2 = 1
@@ -719,28 +760,26 @@ class GameApp(tk.Tk):
         if self.bank_qualifies_rd2 == 0:
             self.bank_not_qualified()
         else:
-            self.rd2_winner = ""
             if self.player1_synth_rd2.score > self.bank_synth.score:
                 self.player1_wins()
 
             elif self.player1_synth_rd2.score < self.bank_synth.score:
-                self.rd2_winner = self.bank_synth.owner
                 self.bank_wins()
 
             else:
-                self.rd2_winner = "tie"
                 self.tie()
 
     def player1_wins(self):
         """Calcualtes returns for player for round 2 and asks whether player wants to play again"""
         ante_payout = gamevars.antewin_paytable[player1_synth.hand_rank] * player1_pot.ante_bet
 
+        # Frame title -----------------------------------------------------------------------------------
         self.rd2_result_window = tk.LabelFrame(text="You have won!",
                                                takefocus=True,
                                                relief='raised')
 
         self.rd2_result_window.pack()
-
+        # Main text -----------------------------------------------------------------------------------
         self.wintext = "Your hand is: %s. \n The bank's hand is: %s." % (str(self.player1_synth_rd2.desc),
                                                                          str(self.bank_synth.desc)) + str(
             "\n You win! Your call bet of %s chips wins 1:1 and your ante bet wins %s chips." % (
@@ -760,17 +799,20 @@ class GameApp(tk.Tk):
                                         text="Do you want to play again?")
         self.play_again_text.pack()
 
+        # Play again button --------------------------------------------------------------------------
         self.play_again_button = tk.Button(self.rd2_result_window,
                                            text="Yes",
                                            command=self.play_again)
 
         self.play_again_button.pack(side='left', expand=True, ipadx=50)
 
+        # Quit button ----------------------------------------------------------------------------------
         self.quit_button = tk.Button(self.rd2_result_window,
                                      text="No. Quit",
                                      command=quit)
         self.quit_button.pack(side='right', expand=True, ipadx=50)
 
+        # Window object --------------------------------------------------------------------------------
         self.rd2_result_windowobj = self.background.create_window(window_x,
                                                                   window_y,
                                                                   window=self.rd2_result_window)
@@ -778,6 +820,7 @@ class GameApp(tk.Tk):
     def bank_wins(self):
         """Displays relevant messages for player for round 2 and asks whether player wants to play again"""
 
+        # Frame title --------------------------------------------------------------------------------
         self.rd2_result_window = tk.LabelFrame(text="The bank wins!",
                                                takefocus=True,
                                                relief='raised')
@@ -787,6 +830,7 @@ class GameApp(tk.Tk):
         self.reset_bets()
         self.update_rd2_displays()
 
+        # Main text  -------------------------------------------------------------------------------------
         self.wintext = "Your hand is: %s. \n The bank's hand is: %s." % (str(self.player1_synth_rd2.desc),
                                                                          str(self.bank_synth.desc)) + str(
             "\n You lose! Your have lost your bets.")
@@ -802,16 +846,19 @@ class GameApp(tk.Tk):
 
         self.play_again_text.pack()
 
+        # Play again button -------------------------------------------------------------------------------
         self.play_again_button = tk.Button(self.rd2_result_window,
                                            text="Yes",
                                            command=self.play_again)
         self.play_again_button.pack(side='left', expand=True, ipadx=50)
 
+        # Quit button -------------------------------------------------------------------------------------
         self.quit_button = tk.Button(self.rd2_result_window,
                                      text="No. Quit",
                                      command=quit)
         self.quit_button.pack(side='right', expand=True, ipadx=50)
 
+        # Window object -----------------------------------------------------------------------------------
         self.rd2_result_windowobj = self.background.create_window(window_x,
                                                                   window_y,
                                                                   window=self.rd2_result_window)
@@ -823,12 +870,14 @@ class GameApp(tk.Tk):
         self.reset_bets()
         self.update_rd2_displays()
 
+        # Frame title -------------------------------------------------------------------------------------
         self.rd2_result_window = tk.LabelFrame(text="This round is a tie!",
                                                takefocus=True,
                                                relief='raised')
 
         self.rd2_result_window.pack()
 
+        # Main message -------------------------------------------------------------------------------------
         self.wintext = "Your hand is: %s. \n The bank's hand is: %s." % (str(self.player1_synth_rd2.desc),
                                                                          str(self.bank_synth.desc)) + str(
             "\n This round is a tie. You get your bets back.")
@@ -844,16 +893,19 @@ class GameApp(tk.Tk):
 
         self.play_again_text.pack()
 
+        # Play again button --------------------------------------------------------------------------------
         self.play_again_button = tk.Button(self.rd2_result_window,
                                            text="Yes",
                                            command=self.play_again)
         self.play_again_button.pack(side='left', expand=True, ipadx=50)
 
+        # Quit button -------------------------------------------------------------------------------------
         self.quit_button = tk.Button(self.rd2_result_window,
                                      text="No. Quit",
                                      command=quit)
         self.quit_button.pack(side='right', expand=True, ipadx=50)
 
+        # Window object -----------------------------------------------------------------------------------
         self.rd2_result_windowobj = self.background.create_window(window_x,
                                                                   window_y,
                                                                   window=self.rd2_result_window)
@@ -876,12 +928,14 @@ class GameApp(tk.Tk):
 
         payout = gamevars.antewin_paytable[player1_synth.hand_rank] * player1_pot.ante_bet
 
+        # Frame title -------------------------------------------------------------------------------------
         self.rd2_result_window = tk.LabelFrame(text="The bank's hand is too weak to qualify! ",
                                                takefocus=True,
                                                relief='raised')
 
         self.rd2_result_window.pack()
 
+        # Main text -------------------------------------------------------------------------------------
         self.not_qualified_text = "The bank does not qualify." + \
                                   str("Your call bet of %s chips is returned " % str(player1_pot.call_bet)) + str(
             "and your ante bet wins. Your win based on your ante hand is %s chips." % str(payout))
@@ -901,16 +955,19 @@ class GameApp(tk.Tk):
 
         self.play_again_text.pack()
 
+        # Play again button ------------------------------------------------------------------------------
         self.play_again_button = tk.Button(self.rd2_result_window,
                                            text="Yes",
                                            command=self.play_again)
         self.play_again_button.pack(side='left', expand=True, ipadx=50)
 
+        # Quit button ------------------------------------------------------------------------------------
         self.quit_button = tk.Button(self.rd2_result_window,
                                      text="No. Quit",
                                      command=quit)
         self.quit_button.pack(side='right', expand=True, ipadx=50)
 
+        # Window object ----------------------------------------------------------------------------------
         self.rd2_result_windowobj = self.background.create_window(window_x,
                                                                   window_y,
                                                                   window=self.rd2_result_window)
@@ -940,27 +997,31 @@ class GameApp(tk.Tk):
         win the sidebet and then have sufficient funds to call)
         """
 
+        # Frame title-------------------------------------------------------------------------------------
         self.cannot_call_window = tk.LabelFrame(text=title,
                                                 takefocus=True,
                                                 relief='raised')
         self.cannot_call_window.pack()
 
+        # Main text -------------------------------------------------------------------------------------
         self.cannot_call_text = tk.Label(self.cannot_call_window,
                                          text="You cannot afford to call the bet. You lose your ante bet.",
                                          wraplength=msgbox_wraplength)
         self.cannot_call_text.pack()
 
-        if self.playerisbankrupt():
+        if self.player_is_bankrupt():
             self.bankrupt_text = tk.Label(self.cannot_call_window,
                                           text="You are bankrupt!",
                                           wraplength=msgbox_wraplength)
             self.bankrupt_text.pack()
 
+            # Restart button -------------------------------------------------------------------------------------
             self.restart_button = tk.Button(self.cannot_call_window,
                                             text="Restart with new bankroll",
                                             command=self.reset_bankroll)
             self.restart_button.pack()
 
+            # Window object -----------------------------------------------------------------------------------
             self.cannot_call_windowobj = self.background.create_window(window_x,
                                                                        window_y,
                                                                        window=self.cannot_call_window)
@@ -970,16 +1031,19 @@ class GameApp(tk.Tk):
                                             text="Do you want to play again?")
             self.play_again_text.pack()
 
+            # Play again button -------------------------------------------------------------------------------
             self.play_again_button = tk.Button(self.cannot_call_window,
                                                text="Yes",
                                                command=self.play_again)
             self.play_again_button.pack()
 
+            # Quit button -------------------------------------------------------------------------------------
             self.quit_button = tk.Button(self.cannot_call_window,
                                          text="No, quit",
                                          command=quit)
             self.quit_button.pack()
 
+            # Window object -----------------------------------------------------------------------------------
             self.cannot_call_windowobj = self.background.create_window(window_x,
                                                                        window_y,
                                                                        window=self.cannot_call_window)

@@ -11,11 +11,11 @@ card_value = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7,
 
 # Multiples represent value multiplier used in hand evaluator
 hand_ranks = {'high_card': 10, 'one_pair': 25,
-              'pair_ace': 100, 'two_pair': 1000,
-              'three_kind': 10 ** 4, 'straight': 10 ** 5,
-              'flush': 10 ** 6, 'full_house': 10 ** 7,
-              'four_kind': 10 ** 8, 'straight_flush': 10 ** 9,
-              'royal_flush': 10 ** 10}
+              'pair_ace': 10**3, 'two_pair': 10**5,
+              'three_kind': 10**7, 'straight': 10**9,
+              'flush': 10**11, 'full_house': 10**13,
+              'four_kind': 10**15, 'straight_flush': 10**17,
+              'royal_flush': 10**19}
 
 # Multiple of ante pot won if ante bet wins
 antewin_paytable = {'royal_flush': 100, 'straight_flush': 20,

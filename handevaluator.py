@@ -249,7 +249,7 @@ def calcvalue(values, suits):
         counts = countval(values)
         return (hand_ranks['straight'] *
                 (reduce(lambda x, y: x * y, counts.single)),
-                "Straight to " + str(max(counts.single)),
+                "Straight to " + getcard(max(counts.single)),
                 'straight')
 
 
