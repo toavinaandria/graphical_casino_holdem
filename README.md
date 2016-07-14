@@ -51,9 +51,11 @@ and the requirements to compare hand combinations (i.e. best 5 cards from 7 card
 
 7) Learning how TkInter works and creating a separate file to test creating GUIs
 
-8) Rewriting of text-version of the game to a GUI version, and incorporation of all relevant methods and functions into the main game class
+8) Wireframing of GUI - drew a couple of versions on paper to see userflow and objects that needed creation step by step
 
-9) Extensive cleaning up of the code to remove redundancies, refactor obscure names and make documentation more explicit
+9) Rewriting of text-version of the game to a GUI version, and incorporation of all relevant methods and functions into the main game class
+
+10) Extensive cleaning up of the code to remove redundancies, refactor obscure names and make documentation more explicit
 
 11) Modularization thanks to PyCharm to make code easier to review and separate configuration, hand evaluation, game objects from
 the main game logic and GUI
