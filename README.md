@@ -1,38 +1,38 @@
-# graphical_casino_holdem -------------------------
+# graphical_casino_holdem 
 A casino hold'em game in Python 2.x with one player versus the bank created from scratch to improve my general programming skills,
 object-oriented programming and using GUIs to improve interaction versus text-based games.
 
-# Requirements ----------------------------
+## Requirements 
 The game uses standard Python 2.x libraries (collections, math, itertools, random, Tkinter, webbrowser) so you should be able to run
 it from most Python 2.x environments.
 
-# Running the game -----------------------------
-To run the game, you need run the maingame.py file using a Python 2.7+ interpreter. If you do not know the rules or need to check hand
-rankings, please look at the "Help" menu.
+## Running the game
+**To run the game, you need run the maingame.py file using a Python 2.7+ interpreter. If you do not know the rules or need to check hand
+rankings, please look at the "Help" menu.**
 
 You can change some of the configuration of the game in the gamevars.py file, but beware that if you do not know what you are doing, 
 you may break the game.
 
 You can restart the game at any time by going to the "File" menu and selecting "New Game".
 
-# Overview of various files ------------------------
-<Images/>
-The Images folder contains all card and card back images in GIF format. See credit for source
+## Overview of various files and folders
+### Images
+The Images folder contains all card and card back images in GIF format. See credit for source.
 
-<gameclasses.py>
-This contains classes used to create card, hand and player objects for use by the main game
+### gameclasses.py
+This contains classes used to create card, hand and player objects for use by the main game.
 
-<gamevars.py>
-This contains the main variables to modify the look or behaviour of the game
+### gamevars.py
+This contains the main variables to modify the look or behaviour of the game.
 
-<handevaluator.py>
+### handevaluator.py
 This is the crux of the engine and contains the code required to evaluate the strength of poker hands. It was relatively complex to
-code due to many intricacies, but could be used for other poker games
+code due to many intricacies, but could be used for other poker games.
 
-<maingame.py>
-This is the main file which contains the main game functions, logic and GUI
+### maingame.py
+This is the main file which contains the main game functions, logic and GUI.
 
-# Development Process ---------------------------------
+## Development Process 
 If you are curious as to how I developed the program, this was my process, which you may find helpful if you are learning
 programming:
 
@@ -60,7 +60,7 @@ the main game logic and GUI
 
 12) Debugging and manually testing the game
 
-# Credits ----------------------------------------
+## Credits 
 All code was created from scratch, with the help of Stack Overflow to overcome some problems.
 
 The card images are open source, and were converted from PNG to GIF using OS X Preview.
@@ -77,7 +77,7 @@ IDE, which has saved me countless hours of typing and manual refactoring.
 
 Thanks to the creator of Casino Hold'Em, Stephen Au-Yeung.
 
-# Contact ----------------------------------------------
+## Contact
 I would love to hear your feedback on the game if you use it or have suggestions, you can find me on the usual social media platforms.
 
 I hope you enjoy learning and playing this game as much as I did creating it.
