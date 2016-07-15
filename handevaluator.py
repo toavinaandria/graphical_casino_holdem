@@ -5,7 +5,7 @@ import gamevars
 from gamevars import card_value, hand_ranks
 
 
-# This module calculates the value of a hand using the calcvalue(values,suits) function.
+# This module calculates the value of a hand using the calc_hand_value(values,suits) function.
 # The values and suits parameters must be lists or tuples of the relevant card values (sorted) and suits.
 
 
@@ -165,7 +165,7 @@ def nranked(sequence, n=1):
     return sorted(sequence, reverse=True)[n - 1]
 
 
-def calcvalue(values, suits):
+def calc_value(values, suits):
     """
     Master hand valuation function which returns the value of a hand.
     Looks up value of hand and cards and computes a score.

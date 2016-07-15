@@ -3,7 +3,7 @@ import random
 
 import gamevars
 from gamevars import card_value, suits, ranks
-from handevaluator import calcvalue
+from handevaluator import calc_value
 
 
 class Card(object):
@@ -161,11 +161,11 @@ class SynthHand(object):
 
     # Gets maximum hand value from the various combinations of 5 cards possible
 
-    def calcvalue(self):
+    def calc_hand_value(self):
         max_hand_val = 0
         max_index = 0
         for number, item in enumerate(range(len(self.comb_5))):
-            hand_val = calcvalue(self.comb_5[item][2], self.comb_5[item][1])
+            hand_val = calc_value(self.comb_5[item][2], self.comb_5[item][1])
             if hand_val > max_hand_val:
                 max_hand_val = hand_val
                 max_index = number

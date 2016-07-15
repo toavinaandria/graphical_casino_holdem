@@ -11,7 +11,7 @@ from gamevars import sidebet_paytable, call_multiple, min_sidebet_hand, space_bt
     canvas_width, canvas_height, msgbox_wraplength, window_x, window_y, rules_url, handranks_url, cardback_path, \
     bankroll_display_coords, ante_display_coords, sidebet_display_coords, callbet_display_coords
 
-from handevaluator import calcvalue
+from handevaluator import calc_value
 
 # Create relevant initial game objects
 player1 = Player(name="player1")
@@ -129,8 +129,8 @@ class GameApp(tk.Tk):
         bank_synth.deal(source=bank_cards.cards, num_cards=2)
         bank_synth.deal(source=community_cards.cards, num_cards=3)
 
-        player1_synth.calcvalue()
-        bank_synth.calcvalue()
+        player1_synth.calc_hand_value()
+        bank_synth.calc_hand_value()
 
     # Menu functiona ------------------------------------------------------------------------------------------------
 
@@ -497,7 +497,7 @@ class GameApp(tk.Tk):
         if player1_pot.side_bet > 0:
 
             # Calculates minimum value required to win side bet - a pair of Aces as a default
-            side_bet_threshold = calcvalue(min_sidebet_hand[0], min_sidebet_hand[1])
+            side_bet_threshold = calc_value(min_sidebet_hand[0], min_sidebet_hand[1])
 
             if player1_synth.score >= side_bet_threshold[0]:
                 payout = (
@@ -744,14 +744,14 @@ class GameApp(tk.Tk):
         Run hand evaluation function and returns value tuple for use in final round calculations
         hand: Must be a SynthHand object
         """
-        return hand.calcvalue()
+        return hand.calc_hand_value()
 
     def define_rd2_outcome(self):
         """Check player hand vs bank hand to determine what outcome is shown to player"""
 
         # Determine whether bank qualifies with a sufficiently large hand
         self.bank_qualifies_rd2 = 0
-        if self.bank_synth.score >= calcvalue(gamevars.min_bank_hand[0], gamevars.min_bank_hand[1])[0]:
+        if self.bank_synth.score >= calc_value(gamevars.min_bank_hand[0], gamevars.min_bank_hand[1])[0]:
             self.bank_qualifies_rd2 = 1
         else:
             self.bank_qualifies_rd2 = 0

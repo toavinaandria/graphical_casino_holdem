@@ -1,17 +1,18 @@
 # graphical_casino_holdem
-A casino hold'em game in Python 2.x with one player versus the bank created from scratch to improve my general programming skills,
-object-oriented programming and using GUIs to improve interaction versus text-based games.
+A casino hold'em game in Python 2.x with one player versus the bank created from scratch to improve my general 
+programming skills, object-oriented programming, test-driven development and using GUIs to improve interaction versus
+text-based games.
 
 ## Requirements
-The game uses standard Python 2.x libraries (collections, math, itertools, random, Tkinter, webbrowser) so you should be able to run
-it from most Python 2.x environments.
+The game uses standard Python 2.x libraries (collections, math, itertools, random, Tkinter, webbrowser) so you should be
+able to run it from most Python 2.x environments.
 
 ## Running the game
-**To run the game, you need run the maingame.py file using a Python 2.7+ interpreter. If you do not know the rules or need to check hand
-rankings, please look at the "Help" menu.**
+**To run the game, you need run the maingame.py file using a Python 2.7+ interpreter. If you do not know the rules or 
+need to check hand rankings, please look at the "Help" menu.**
 
-You can change some of the configuration of the game in the gamevars.py file, but beware that if you do not know what you are doing,
-you may break the game.
+You can change some of the configuration of the game in the gamevars.py file, but beware that if you do not know what
+you are doing, you may break the game. In particular, changing rank, suits and values for cards may break the game.
 
 You can restart the game at any time by going to the "File" menu and selecting "New Game".
 
@@ -31,6 +32,9 @@ code due to many intricacies, but could be used for other poker games.
 
 ### maingame.py
 This is the main file which contains the main game functions, logic and GUI.
+
+### tests.py
+This is the test file which contains unit tests for some of the functions and game logic to ensure they work and are not broken.
 
 ## Development Process
 If you are curious as to how I developed the program, this was my process, which you may find helpful if you are learning
@@ -61,6 +65,8 @@ and the requirements to compare hand combinations (i.e. best 5 cards from 7 card
 the main game logic and GUI
 
 12) Debugging and manually testing the game
+
+13) Learning about how to write unit tests and creating unit tests for key functions of the game
 
 ## Credits
 All code was created from scratch, with the help of Stack Overflow to overcome some problems.
