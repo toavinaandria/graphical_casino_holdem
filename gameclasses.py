@@ -6,7 +6,7 @@ from gamevars import card_value, suits, ranks
 from handevaluator import calcvalue
 
 
-class Card:
+class Card(object):
     """
     Define card objects
     """
@@ -20,7 +20,7 @@ class Card:
         return self.rank + self.suit
 
 
-class Deck:
+class Deck(object):
     """
     Define deck object with relevant methods
     """
@@ -44,9 +44,9 @@ class Deck:
         random.shuffle(self.deck)
 
 
-class Player:
+class Player(object):
     """
-    Defines player object
+    Define player object
     """
 
     def __init__(self, name="Player 1"):
@@ -60,9 +60,9 @@ class Player:
         self.bankroll += amount
 
 
-class Pot:
+class Pot(object):
     """
-    Defines pot to keep count of ante, side and call bets
+    Define pot to keep count of ante, side and call bets
     """
     def __init__(self, owner="Player 1", ante_bet=0, side_bet=0, call_bet=0):
         self.owner = owner
@@ -80,7 +80,7 @@ class Pot:
         self.call_bet += amount
 
 
-class PhysHand:
+class PhysHand(object):
     """
     Actual cards in Player and bank hands + community cards.
     """
@@ -101,7 +101,7 @@ class PhysHand:
         return deck_comp
 
 
-class SynthHand:
+class SynthHand(object):
     """
     Synthetic hand objects that aggregate community cards and bank / player cards. Store hand value and rank
     after relevant methods are executed.

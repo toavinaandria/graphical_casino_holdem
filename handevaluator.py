@@ -10,7 +10,7 @@ from gamevars import card_value, hand_ranks
 
 
 def match_val_bool(seq):
-    """Creates a boolean list for consecutive matching card values."""
+    """Create a boolean list for consecutive matching card values."""
     true_list = []
     for i in range(len(seq) - 1):
         if seq[i] == seq[i + 1]:
@@ -22,7 +22,7 @@ def match_val_bool(seq):
 
 def maxconsmatches(seq):
     """
-    Counts the maximum number of consecutive matching card values in a sequence
+    Count the maximum number of consecutive matching card values in a sequence
     Used to distinguish between 4 of kind and full house or 3 of a kind and two pairs.
     """
     max_cons = 0
@@ -50,7 +50,7 @@ def maxconsmatches(seq):
 
 def isflush(values, suits):
     """
-    Checks whether all suits are the same.
+    Check whether all suits are the same.
     Needs to be applied to list of card suits.
     """
     return len(set(suits)) == 1
@@ -58,7 +58,7 @@ def isflush(values, suits):
 
 def isstraight(values, suits):
     """
-    Checks whether hand contains cards with consecutive rankings.
+    Check whether hand contains cards with consecutive rankings.
     Needs to be applied to list of card values sorted in descending order.
     """
     value_list = []
@@ -133,7 +133,7 @@ def ishighcard(values, suits):
 
 def countval(seq):
     """
-    Creates a dictionary that counts the number of occurences of each card value.
+    Create a dictionary that counts the number of occurences of each card value.
     Used to return hand composition and calculate hand value.
     """
     four_kind = 0
@@ -155,13 +155,13 @@ def countval(seq):
 
 def getcard(value):
     """
-    Returns the relevant card (rank, i.e. A, 4, 5...) from its value by returning the relevant index from card value.
+    Return the relevant card (rank, i.e. A, 4, 5...) from its value by returning the relevant index from card value.
     """
     return gamevars.card_value.keys()[gamevars.card_value.values().index(value)]
 
 
 def nranked(sequence, n=1):
-    """Gets the nth ranked value in a sequence. Used to compare kicker values."""
+    """Get the nth ranked value in a sequence. Used to compare kicker values."""
     return sorted(sequence, reverse=True)[n - 1]
 
 

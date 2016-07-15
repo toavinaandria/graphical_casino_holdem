@@ -79,7 +79,7 @@ class GameApp(tk.Tk):
                         player1_pot.side_bet == 0
 
     def restart_window(self):
-        """Creates a window to ask whether players want to restart with a fresh bankroll if they are bankrupt"""
+        """Create a window to ask whether players want to restart with a fresh bankroll if they are bankrupt"""
 
         # Frame title -------------------------------------------------------------------------------------------------
         self.bankrupt_window = tk.LabelFrame(text="Start a new game with a new bankroll?",
@@ -115,7 +115,7 @@ class GameApp(tk.Tk):
                                                                 width=350)
 
     def eval_hands(self):
-        """Evaluates the score of relevant hands to check whether bank qualifies and who wins which round"""
+        """Evaluate the score of relevant hands to check whether bank qualifies and who wins which round"""
 
         global player1_synth, bank_synth, player1_cards, community_cards, bank_cards
 
@@ -135,7 +135,7 @@ class GameApp(tk.Tk):
     # Menu functiona ------------------------------------------------------------------------------------------------
 
     def create_menu(self):
-        """Creates toplevel menu for help, restarting and exiting the game"""
+        """Create toplevel menu for help, restarting and exiting the game"""
         menubar = tk.Menu(self.parent)
         self.config(menu=menubar)
 
@@ -150,11 +150,11 @@ class GameApp(tk.Tk):
         menubar.add_cascade(label="Help", menu=helpMenu)
 
     def show_rules(self):
-        """Opens a browser window with the URL showing game rules"""
+        """Open a browser window with the URL showing game rules"""
         webbrowser.open(rules_url, new=1, autoraise=True)
 
     def show_hand_ranks(self):
-        """Opens a browser window with the URL showing hand ranks for help"""
+        """Open a browser window with the URL showing hand ranks for help"""
         webbrowser.open(handranks_url, new=1, autoraise=True)
 
     # -----------------------------------------------------------------------------------------------------------------
@@ -286,12 +286,12 @@ class GameApp(tk.Tk):
     # -------------------------------------------------------------------------------------------------------------------
 
     def reset_bankroll(self):
-        """Resets bankroll if player was bankrupt and wants to play another round"""
+        """Reset bankroll if player was bankrupt and wants to play another round"""
         player1.bankroll = gamevars.starting_chips
         self.play_again()
 
     def get_antebet(self):
-        """Displays ante bet window on canvas and stores bet value"""
+        """Display ante bet window on canvas and store bet value"""
 
         # Frame title ----------------------------------------------------------------------------------------------
         self.ante_window = tk.LabelFrame(text="Ante Bet",
@@ -375,14 +375,14 @@ class GameApp(tk.Tk):
 
     def update_display(self, target, content):
         """
-        Allows to change text in game statistics display
+        Allow to change text in game statistics display
         :param target: Object in canvas for which to update text, must be one of the display objects
         :param content: Text to display, must be a string
         """
         self.background.itemconfig(target, text=content)
 
     def update_rd1_displays(self):
-        """Updates relevant round 1 displays (i.e. everything except call bet"""
+        """Update relevant round 1 displays (i.e. everything except call bet"""
         self.update_display(self.bankroll_display,
                             str(player1.bankroll) + " chips")
         self.update_display(self.ante_display,
@@ -394,7 +394,7 @@ class GameApp(tk.Tk):
     def confirm_ante(self):
         """
         Function to ensure that ante and side bet amounts entered in spinboxes are confirmed only when "Confirm" button
-        is pressed. Updates bankroll and ante and side bet displays.
+        is pressed. Update bankroll and ante and side bet displays.
         """
         self.update_antebet()
         self.background.itemconfig(self.ante_window_obj,
@@ -456,7 +456,7 @@ class GameApp(tk.Tk):
                                                                     window=self.sidebet_window)
 
     def confirm_sidebet(self):
-        """Gets relevant sidebet value and hides sidebet window"""
+        """Get relevant sidebet value and hide sidebet window"""
         self.update_sidebet()
         self.background.itemconfig(self.sidebet_window_obj,
                                    state='hidden')
@@ -476,7 +476,7 @@ class GameApp(tk.Tk):
         player1.change_bankroll(- player1_pot.side_bet)
 
     def reset_game(self):
-        """Shuflles the deck, empties all hands and creates initial cards (without resetting bankroll)"""
+        """Shuffle the deck, empty all hands and create initial cards (without resetting bankroll)"""
         global deck, player1_cards, bank_cards, community_cards
         deck = Deck()
         deck.shuffle()
@@ -485,7 +485,7 @@ class GameApp(tk.Tk):
         community_cards = PhysHand(owner='community')
 
     def deal_rd1_cards(self):
-        """Deals 2 cards to each of player and bank, and 3 community cards for the flop"""
+        """Deal 2 cards to each of player and bank, and 3 community cards for the flop"""
         global player1_cards, bank_cards, community_cards
 
         player1_cards.deal(source=deck.deck, num_cards=2)
@@ -493,7 +493,7 @@ class GameApp(tk.Tk):
         community_cards.deal(source=deck.deck, num_cards=3)
 
     def exec_side_bet(self):
-        """Executes side bet procedures and updates displays accordingly"""
+        """Execute side bet procedures and update displays accordingly"""
         if player1_pot.side_bet > 0:
 
             # Calculates minimum value required to win side bet - a pair of Aces as a default
@@ -540,7 +540,7 @@ class GameApp(tk.Tk):
             self.begin_round2()
 
     def display_AA_result(self, title, text):
-        """Function that displays results of AA sidebet with button allowing player to continue on"""
+        """Display results of AA sidebet with button allowing player to continue on"""
 
         # Frame title -------------------------------------------------------------------------------------------------
 
@@ -567,7 +567,7 @@ class GameApp(tk.Tk):
                                                                window=self.results_window)
 
     def begin_round2(self):
-        """Begins procedure after ante and side bets, asking player whether they want to fold or call after flop"""
+        """Begin procedure after ante and side bets, asking player whether they want to fold or call after flop"""
 
         # Removes sidebet window only if has been created, otherwise continues to next step
         try:
@@ -679,7 +679,7 @@ class GameApp(tk.Tk):
         self.final_round()
 
     def show_bank_cards(self):
-        """Displays bank cards for the final round once player calls the bet"""
+        """Display bank cards for the final round once player calls the bet"""
         self.BCard1_img = tk.PhotoImage(file="images/" +
                                              self.BCard1_rs +
                                              ".gif").subsample(card_xshrink,
@@ -698,7 +698,7 @@ class GameApp(tk.Tk):
                                      image=self.BCard2_img)
 
     def deal_rd2_cards(self):
-        """Deals an extra 2 community cards for the final round and displays them"""
+        """Deal an extra 2 community cards for the final round and displays them"""
         global community_cards
 
         community_cards.deal(source=deck.deck, num_cards=2)
@@ -725,7 +725,7 @@ class GameApp(tk.Tk):
                                      image=self.CCard5_img)
 
     def prep_rd2_hands(self):
-        """Prepares round 2 synthetic hands for evaluation function"""
+        """Prepare round 2 synthetic hands for evaluation function"""
         global community_cards
 
         # Reset synthetic hands to recreate them - New round 2 object for player 1 synthetic hand required as ante hand
@@ -741,13 +741,13 @@ class GameApp(tk.Tk):
 
     def eval_rd2_hands(self, hand):
         """
-        Runs hand evaluation function and returns value tuple for use in final round calculations
+        Run hand evaluation function and returns value tuple for use in final round calculations
         hand: Must be a SynthHand object
         """
         return hand.calcvalue()
 
     def define_rd2_outcome(self):
-        """Checks player hand vs bank hand to determine what outcome is shown to player"""
+        """Check player hand vs bank hand to determine what outcome is shown to player"""
 
         # Determine whether bank qualifies with a sufficiently large hand
         self.bank_qualifies_rd2 = 0
@@ -770,7 +770,7 @@ class GameApp(tk.Tk):
                 self.tie()
 
     def player1_wins(self):
-        """Calcualtes returns for player for round 2 and asks whether player wants to play again"""
+        """Calculate returns for player for round 2 and ask whether player wants to play again"""
         ante_payout = gamevars.antewin_paytable[player1_synth.hand_rank] * player1_pot.ante_bet
 
         # Frame title -----------------------------------------------------------------------------------
@@ -818,7 +818,7 @@ class GameApp(tk.Tk):
                                                                   window=self.rd2_result_window)
 
     def bank_wins(self):
-        """Displays relevant messages for player for round 2 and asks whether player wants to play again"""
+        """Display relevant messages for player for round 2 and ask whether player wants to play again after bank win"""
 
         # Frame title --------------------------------------------------------------------------------
         self.rd2_result_window = tk.LabelFrame(text="The bank wins!",
@@ -864,7 +864,7 @@ class GameApp(tk.Tk):
                                                                   window=self.rd2_result_window)
 
     def tie(self):
-        """Displays relevant messages for player for round 2 and asks whether player wants to play again"""
+        """Display relevant messages for player for round 2 and ask whether player wants to play again after tie"""
 
         player1.change_bankroll(player1_pot.ante_bet + player1_pot.call_bet)
         self.reset_bets()
@@ -911,7 +911,7 @@ class GameApp(tk.Tk):
                                                                   window=self.rd2_result_window)
 
     def update_rd2_displays(self):
-        """Updates the display of all bet and bankroll statistics post final-round"""
+        """Update the display of all bet and bankroll statistics post final-round"""
 
         self.update_display(self.bankroll_display, str(player1.bankroll) + " chips")
         self.update_display(self.ante_display, str(player1_pot.ante_bet) + " chips")
@@ -973,7 +973,7 @@ class GameApp(tk.Tk):
                                                                   window=self.rd2_result_window)
 
     def play_again(self):
-        """Deletes the canvas and resets the game to the first round"""
+        """Delete the canvas and reset the game to the first round"""
         self.background.destroy()
         self.reset_game()
         self.deal_rd1_cards()
@@ -981,7 +981,7 @@ class GameApp(tk.Tk):
         self.get_sidebet()
 
     def final_round(self):
-        """Executes final round procedures"""
+        """Execute final round procedures"""
         self.background.itemconfig(self.foldorcall_windowobj, state='hidden')
 
         self.show_bank_cards()
