@@ -1,3 +1,7 @@
+"""
+Note that this file is geared for using PyCharm's testing procedures
+"""
+
 from unittest import TestCase
 
 from gameclasses import Player, Card, Deck, Pot, PhysHand
@@ -168,7 +172,6 @@ class Testhands(TestCase):
         self.assertEqual(calc_value((14, 10, 8, 7, 4), ('H', 'S', 'S', 'S', 'S')),(275, 'High card: A with 10,8,7,4',
                                                                                    'high_card'))
 # --------------------------------------------------------------------------------------------------------------------
-
 
 
 
