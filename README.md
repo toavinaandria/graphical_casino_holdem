@@ -1,4 +1,5 @@
-# graphical_casino_holdem
+# Graphical Casino Hold'em
+
 A casino hold'em game in Python 2.x with one player versus the bank created from scratch to improve my general 
 programming skills, object-oriented programming, test-driven development and using GUIs to improve interaction versus
 text-based games.
