@@ -2,6 +2,7 @@
 
 import Tkinter as tk
 import webbrowser
+import sys
 
 import gamevars
 from gameclasses import Deck, Player, Pot, PhysHand, SynthHand
@@ -36,7 +37,7 @@ class GameApp(tk.Tk):
         self.reset_game()
         self.deal_rd1_cards()
         self.create_main_widgets()
-        self.get_sidebet()
+        self.display_opening_msg()
 
     # Validation functions for betting amounts -------------------------------------------------------------------------
 
@@ -103,7 +104,7 @@ class GameApp(tk.Tk):
         # Quit button -------------------------------------------------------------------------------------------------
         self.quit_button = tk.Button(self.bankrupt_window,
                                      text="Quit",
-                                     command=quit)
+                                     command=sys.exit)
 
         self.quit_button.pack()
 
@@ -132,7 +133,7 @@ class GameApp(tk.Tk):
         player1_synth.calc_hand_value()
         bank_synth.calc_hand_value()
 
-    # Menu functiona ------------------------------------------------------------------------------------------------
+    # Menu functions -------------------------------------------------------------------------------------------------
 
     def create_menu(self):
         """Create toplevel menu for help, restarting and exiting the game"""
@@ -141,7 +142,7 @@ class GameApp(tk.Tk):
 
         fileMenu = tk.Menu(menubar)
         fileMenu.add_command(label="New Game", command=self.reset_bankroll)
-        fileMenu.add_command(label="Exit", command=quit)
+        fileMenu.add_command(label="Exit", command=sys.exit)
         menubar.add_cascade(label="File", menu=fileMenu)
 
         helpMenu = tk.Menu(menubar)
@@ -271,7 +272,7 @@ class GameApp(tk.Tk):
                                      canvas_height / 5,
                                      image=self.BCard2_img)
 
-        # Card references for display ----------------------------------------------------------------------------------
+        # Card references for display ---------------------------------------------------------------------------------
 
         self.P1Card1_rs = str(player1_cards.cards[0])
         self.P1Card2_rs = str(player1_cards.cards[1])
@@ -283,7 +284,47 @@ class GameApp(tk.Tk):
         self.CCard2_rs = str(community_cards.cards[1])
         self.CCard3_rs = str(community_cards.cards[2])
 
-    # -------------------------------------------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------------------------------------
+
+    # Opening message box ---------------------------------------------------------------------------------------------
+
+    def display_opening_msg(self):
+        """Displays the opening message when the game is first started"""
+
+        # Frame title ----------------------------------------------------------------------------------------------
+        self.opening_window = tk.LabelFrame(text="Welcome!",
+                                            takefocus=True,
+                                            relief='raised')
+
+        self.opening_window.pack()
+
+        # Main message ---------------------------------------------------------------------------------------------
+        self.opening_window_label = tk.Label(self.opening_window,
+                                      text="Welcome to Casino Hold'Em! For game rules or rankings, see " + str(
+                                          " Help in the menu bar "),
+                                      wraplength=msgbox_wraplength)
+        self.opening_window_label.pack()
+
+        # Start game button ----------------------------------------------------------------------------------------
+        self.start_game_button = tk.Button(self.opening_window,
+                                                text="OK. Start game",
+                                                command=self.hide_opening_msg,
+                                                state='normal')
+
+        self.start_game_button.pack()
+
+        # Sidebet window object ------------------------------------------------------------------------------------
+        self.opening_window_obj = self.background.create_window(window_x,
+                                                                window_y,
+                                                                window=self.opening_window)
+
+    def hide_opening_msg(self):
+        self.background.itemconfig(self.opening_window_obj,
+                                   state='hidden')
+        self.get_sidebet()
+
+    # -----------------------------------------------------------------------------------------------------------------
+
 
     def reset_bankroll(self):
         """Reset bankroll if player was bankrupt and wants to play another round"""
@@ -409,6 +450,8 @@ class GameApp(tk.Tk):
 
     def get_sidebet(self):
         """Open sidebet window to get sidebet amounts"""
+
+        self.display_opening_msg()
 
         if self.player_is_bankrupt():
             self.restart_window()
@@ -658,7 +701,7 @@ class GameApp(tk.Tk):
             # Quit button -----------------------------------------------------------------------------------
             self.quit_button = tk.Button(self.foldresult_window,
                                          text="No. Quit",
-                                         command=quit)
+                                         command=sys.exit)
             self.quit_button.pack(side='right', expand=True, ipadx=50)
 
             # Window object ---------------------------------------------------------------------------------
@@ -809,7 +852,7 @@ class GameApp(tk.Tk):
         # Quit button ----------------------------------------------------------------------------------
         self.quit_button = tk.Button(self.rd2_result_window,
                                      text="No. Quit",
-                                     command=quit)
+                                     command=sys.exit)
         self.quit_button.pack(side='right', expand=True, ipadx=50)
 
         # Window object --------------------------------------------------------------------------------
@@ -855,7 +898,7 @@ class GameApp(tk.Tk):
         # Quit button -------------------------------------------------------------------------------------
         self.quit_button = tk.Button(self.rd2_result_window,
                                      text="No. Quit",
-                                     command=quit)
+                                     command=sys.exit)
         self.quit_button.pack(side='right', expand=True, ipadx=50)
 
         # Window object -----------------------------------------------------------------------------------
@@ -902,7 +945,7 @@ class GameApp(tk.Tk):
         # Quit button -------------------------------------------------------------------------------------
         self.quit_button = tk.Button(self.rd2_result_window,
                                      text="No. Quit",
-                                     command=quit)
+                                     command=sys.exit)
         self.quit_button.pack(side='right', expand=True, ipadx=50)
 
         # Window object -----------------------------------------------------------------------------------
@@ -964,7 +1007,7 @@ class GameApp(tk.Tk):
         # Quit button ------------------------------------------------------------------------------------
         self.quit_button = tk.Button(self.rd2_result_window,
                                      text="No. Quit",
-                                     command=quit)
+                                     command=sys.exit)
         self.quit_button.pack(side='right', expand=True, ipadx=50)
 
         # Window object ----------------------------------------------------------------------------------
@@ -1040,7 +1083,7 @@ class GameApp(tk.Tk):
             # Quit button -------------------------------------------------------------------------------------
             self.quit_button = tk.Button(self.cannot_call_window,
                                          text="No, quit",
-                                         command=quit)
+                                         command=sys.exit)
             self.quit_button.pack()
 
             # Window object -----------------------------------------------------------------------------------

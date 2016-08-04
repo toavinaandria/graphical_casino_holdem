@@ -66,7 +66,7 @@ the main game logic and GUI
 
 12) Debugging and manually testing the game
 
-13) Learning about how to write unit tests and creating unit tests for key functions of the game
+13) Learning how to write unit tests and creating unit tests for key functions of the game
 
 ## Credits
 All code was created from scratch, with the help of Stack Overflow to overcome some problems.
